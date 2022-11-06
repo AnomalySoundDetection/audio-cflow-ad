@@ -1,0 +1,1 @@
+82.15,0.00,0.00 		for DET_AUROC/SEG_AUROC/SEG_AUPRO at epoch 0/0/0 for valve_00
