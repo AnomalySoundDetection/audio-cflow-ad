@@ -5,7 +5,7 @@ from custom_models import *
 # FrEIA (https://github.com/VLL-HD/FrEIA/)
 import FrEIA.framework as Ff
 import FrEIA.modules as Fm
-import timm
+#import timm
 
 
 def positionalencoding2d(D, H, W):
@@ -111,67 +111,67 @@ def load_encoder_arch(c, L):
             else:
                 pool_dims.append(encoder.layer4[-1].conv2.out_channels)
             pool_cnt = pool_cnt + 1
-    elif 'vit' in c.enc_arch:
-        if  c.enc_arch == 'vit_base_patch16_224':
-            encoder = timm.create_model('vit_base_patch16_224', pretrained=True)
-        elif  c.enc_arch == 'vit_base_patch16_384':
-            encoder = timm.create_model('vit_base_patch16_384', pretrained=True)
-        else:
-            raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
-        #
-        if L >= 3:
-            encoder.blocks[10].register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder.blocks[6].mlp.fc2.out_features)
-            pool_cnt = pool_cnt + 1
-        if L >= 2:
-            encoder.blocks[2].register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder.blocks[6].mlp.fc2.out_features)
-            pool_cnt = pool_cnt + 1
-        if L >= 1:
-            encoder.blocks[6].register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder.blocks[6].mlp.fc2.out_features)
-            pool_cnt = pool_cnt + 1
-    elif 'efficient' in c.enc_arch:
-        if 'b5' in c.enc_arch:
-            encoder = timm.create_model(c.enc_arch, pretrained=True)
-            blocks = [-2, -3, -5]
-        else:
-            raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
-        #
-        if L >= 3:
-            encoder.blocks[blocks[2]][-1].bn3.register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder.blocks[blocks[2]][-1].bn3.num_features)
-            pool_cnt = pool_cnt + 1
-        if L >= 2:
-            encoder.blocks[blocks[1]][-1].bn3.register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder.blocks[blocks[1]][-1].bn3.num_features)
-            pool_cnt = pool_cnt + 1
-        if L >= 1:
-            encoder.blocks[blocks[0]][-1].bn3.register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder.blocks[blocks[0]][-1].bn3.num_features)
-            pool_cnt = pool_cnt + 1
-    elif 'mobile' in c.enc_arch:
-        if  c.enc_arch == 'mobilenet_v3_small':
-            encoder = mobilenet_v3_small(pretrained=True, progress=True).features
-            blocks = [-2, -5, -10]
-        elif  c.enc_arch == 'mobilenet_v3_large':
-            encoder = mobilenet_v3_large(pretrained=True, progress=True).features
-            blocks = [-2, -5, -11]
-        else:
-            raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
-        #
-        if L >= 3:
-            encoder[blocks[2]].block[-1][-3].register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder[blocks[2]].block[-1][-3].out_channels)
-            pool_cnt = pool_cnt + 1
-        if L >= 2:
-            encoder[blocks[1]].block[-1][-3].register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder[blocks[1]].block[-1][-3].out_channels)
-            pool_cnt = pool_cnt + 1
-        if L >= 1:
-            encoder[blocks[0]].block[-1][-3].register_forward_hook(get_activation(pool_layers[pool_cnt]))
-            pool_dims.append(encoder[blocks[0]].block[-1][-3].out_channels)
-            pool_cnt = pool_cnt + 1
+    #elif 'vit' in c.enc_arch:
+    #    if  c.enc_arch == 'vit_base_patch16_224':
+    #        encoder = timm.create_model('vit_base_patch16_224', pretrained=True)
+    #    elif  c.enc_arch == 'vit_base_patch16_384':
+    #        encoder = timm.create_model('vit_base_patch16_384', pretrained=True)
+    #    else:
+    #        raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
+    #    #
+    #    if L >= 3:
+    #        encoder.blocks[10].register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder.blocks[6].mlp.fc2.out_features)
+    #        pool_cnt = pool_cnt + 1
+    #    if L >= 2:
+    #        encoder.blocks[2].register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder.blocks[6].mlp.fc2.out_features)
+    #        pool_cnt = pool_cnt + 1
+    #    if L >= 1:
+    #        encoder.blocks[6].register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder.blocks[6].mlp.fc2.out_features)
+    #        pool_cnt = pool_cnt + 1
+    #elif 'efficient' in c.enc_arch:
+    #    if 'b5' in c.enc_arch:
+    #        encoder = timm.create_model(c.enc_arch, pretrained=True)
+    #        blocks = [-2, -3, -5]
+    #    else:
+    #        raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
+    #    #
+    #    if L >= 3:
+    #        encoder.blocks[blocks[2]][-1].bn3.register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder.blocks[blocks[2]][-1].bn3.num_features)
+    #        pool_cnt = pool_cnt + 1
+    #    if L >= 2:
+    #        encoder.blocks[blocks[1]][-1].bn3.register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder.blocks[blocks[1]][-1].bn3.num_features)
+    #        pool_cnt = pool_cnt + 1
+    #    if L >= 1:
+    #        encoder.blocks[blocks[0]][-1].bn3.register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder.blocks[blocks[0]][-1].bn3.num_features)
+    #        pool_cnt = pool_cnt + 1
+    #elif 'mobile' in c.enc_arch:
+    #    if  c.enc_arch == 'mobilenet_v3_small':
+    #        encoder = mobilenet_v3_small(pretrained=True, progress=True).features
+    #        blocks = [-2, -5, -10]
+    #    elif  c.enc_arch == 'mobilenet_v3_large':
+    #        encoder = mobilenet_v3_large(pretrained=True, progress=True).features
+    #        blocks = [-2, -5, -11]
+    #    else:
+    #        raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
+    #    #
+    #    if L >= 3:
+    #        encoder[blocks[2]].block[-1][-3].register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder[blocks[2]].block[-1][-3].out_channels)
+    #        pool_cnt = pool_cnt + 1
+    #    if L >= 2:
+    #        encoder[blocks[1]].block[-1][-3].register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder[blocks[1]].block[-1][-3].out_channels)
+    #        pool_cnt = pool_cnt + 1
+    #    if L >= 1:
+    #        encoder[blocks[0]].block[-1][-3].register_forward_hook(get_activation(pool_layers[pool_cnt]))
+    #        pool_dims.append(encoder[blocks[0]].block[-1][-3].out_channels)
+    #        pool_cnt = pool_cnt + 1
     else:
         raise NotImplementedError('{} is not supported architecture!'.format(c.enc_arch))
     #

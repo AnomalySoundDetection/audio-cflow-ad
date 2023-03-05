@@ -2,7 +2,6 @@ import os
 from PIL import Image
 import numpy as np
 import torch
-from torchvision.io import read_video, write_jpeg
 from torch.utils.data import Dataset
 from torchvision import transforms as T
 

@@ -21,14 +21,20 @@ log_theta = torch.nn.LogSigmoid()
 def train_meta_epoch(c, epoch, loader, encoder, decoders, optimizer, pool_layers, N):
     P = c.condition_vec
     L = c.pool_layers
+
+    #print("Number of pooling layer is ", L)
+    #print(encoder)
+
     decoders = [decoder.train() for decoder in decoders]
     adjust_learning_rate(c, optimizer, epoch)
     I = len(loader)
     iterator = iter(loader)
     for sub_epoch in range(c.sub_epochs):
+        print("Epoch {cur}/{total}".format(cur=sub_epoch+1, total=c.sub_epochs))
+
         train_loss = 0.0
         train_count = 0
-        for i in range(I):
+        for i in tqdm(range(I)):
             # warm-up learning rate
             lr = warmup_learning_rate(c, epoch, i+sub_epoch*I, I*c.sub_epochs, optimizer)
             # sample batch
@@ -51,12 +57,15 @@ def train_meta_epoch(c, epoch, loader, encoder, decoders, optimizer, pool_layers
                     e = e.reshape(-1, e.size(1), e_hw, e_hw)  # BxCxHxW
                 else:
                     e = activation[layer].detach()  # BxCxHxW
+                    #print("(B, C, H, W) = ", e.size())
                 #
                 B, C, H, W = e.size()
                 S = H*W
                 E = B*S    
                 #
                 p = positionalencoding2d(P, H, W).to(c.device).unsqueeze(0).repeat(B, 1, 1, 1)
+                #print("Size after positional encoding is ", p.size())
+
                 c_r = p.reshape(B, P, S).transpose(1, 2).reshape(E, P)  # BHWxP
                 e_r = e.reshape(B, C, S).transpose(1, 2).reshape(E, C)  # BHWxC
                 perm = torch.randperm(E).to(c.device)  # BHW

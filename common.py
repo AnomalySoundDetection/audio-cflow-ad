@@ -118,7 +118,6 @@ def file_load(wav_name, mono=False):
 ########################################################################
 def file_to_vector_array(file_name,
                          n_mels=64,
-                         frames=5,
                          n_fft=1024,
                          hop_length=512,
                          power=2.0):
@@ -133,12 +132,12 @@ def file_to_vector_array(file_name,
         * dataset.shape = (dataset_size, feature_vector_length)
     """
     # 01 calculate the number of dimensions
-    dims = n_mels * frames
+    #dims = n_mels * frames
 
     # 02 generate melspectrogram using librosa
     y, sr = file_load(file_name)
     mel_spectrogram = librosa.feature.melspectrogram(y=y,
-                                                     sr=sr,
+                                                     sr=16000,
                                                      n_fft=n_fft,
                                                      hop_length=hop_length,
                                                      n_mels=n_mels,
@@ -148,18 +147,16 @@ def file_to_vector_array(file_name,
     log_mel_spectrogram = 20.0 / power * numpy.log10(mel_spectrogram + sys.float_info.epsilon)
 
     # 04 calculate total vector size
-    vector_array_size = len(log_mel_spectrogram[0, :]) - frames + 1
+    #vector_array_size = len(log_mel_spectrogram[0, :]) - frames + 1
 
     # 05 skip too short clips
-    if vector_array_size < 1:
-        return numpy.empty((0, dims))
+    #if vector_array_size < 1:
+    #    return numpy.empty((0, dims))
 
     # 06 generate feature vectors by concatenating multiframes
-    vector_array = numpy.zeros((vector_array_size, dims))
-    for t in range(frames):
-        vector_array[:, n_mels * t: n_mels * (t + 1)] = log_mel_spectrogram[:, t: t + vector_array_size].T
+    #vector_array = numpy.zeros((vector_array_size, dims))
 
-    return vector_array
+    return log_mel_spectrogram.T
 
 
 # load dataset

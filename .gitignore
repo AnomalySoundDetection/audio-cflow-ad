@@ -3,3 +3,4 @@ weights/*
 images/*
 viz/*
 results/*
+*.pyc
